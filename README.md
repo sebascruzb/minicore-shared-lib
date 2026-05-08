@@ -1,0 +1,1 @@
+# minicore-shared-lib
