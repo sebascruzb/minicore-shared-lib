@@ -12,7 +12,7 @@
  *   - solutionFile  : ruta al .sln  (requerido)
  *   - configuration : Debug | Release (default: Release)
  *   - outputDir     : directorio de salida (default: publish)
- *   - extraArgs     : argumentos adicionales para dotnet build (default: '')
+ *   - extraArgs     : argumentos adicionales para /usr/local/bin/dotnet build (default: '')
  */
 def call(Map config = [:]) {
 
@@ -21,14 +21,14 @@ def call(Map config = [:]) {
     String outputDir     = config.get('outputDir',     'publish')
     String extraArgs     = config.get('extraArgs',     '')
 
-    echo "buildDotNet — Solución: ${solutionFile} | Config: ${configuration} | Output: ${outputDir}"
+    echo "🏗️  buildDotNet — Solución: ${solutionFile} | Config: ${configuration} | Output: ${outputDir}"
 
     sh """
         echo "--- Verificando versión de .NET ---"
-        dotnet --version
+        /usr/local/bin/dotnet --version
 
         echo "--- Compilando ${solutionFile} ---"
-        dotnet build ${solutionFile} \
+        /usr/local/bin/dotnet build ${solutionFile} \
             --configuration ${configuration} \
             --no-restore \
             --output ${outputDir} \
@@ -50,5 +50,5 @@ def call(Map config = [:]) {
     // Archivar log del build
     archiveArtifacts artifacts: 'build-output.log', allowEmptyArchive: true
 
-    echo "buildDotNet completado exitosamente"
+    echo "✅  buildDotNet completado exitosamente"
 }
