@@ -21,31 +21,29 @@ def call(Map config = [:]) {
     String outputDir     = config.get('outputDir',     'publish')
     String extraArgs     = config.get('extraArgs',     '')
 
-    echo "🏗️  buildDotNet — Solución: ${solutionFile} | Config: ${configuration} | Output: ${outputDir}"
+    echo "buildDotNet — Solución: ${solutionFile} | Config: ${configuration} | Output: ${outputDir}"
 
     sh """
-        echo "--- Verificando versión de .NET ---"
-        /usr/local/bin/dotnet --version
+    echo "--- Verificando versión de .NET ---"
+    /usr/local/bin/dotnet --version
 
-        echo "--- Compilando ${solutionFile} ---"
-        /usr/local/bin/dotnet build ${solutionFile} \
-            --configuration ${configuration} \
-            --no-restore \
-            --output ${outputDir} \
-            --verbosity minimal \
-            ${extraArgs} \
-            2>&1 | tee build-output.log
+    echo "--- Compilando ${solutionFile} ---"
 
-        BUILD_RESULT=\${PIPESTATUS[0]}
+    /usr/local/bin/dotnet build ${solutionFile} \
+        --configuration ${configuration} \
+        --no-restore \
+        --output ${outputDir} \
+        --verbosity minimal \
+        ${extraArgs} \
+        2>&1 | tee build-output.log
 
-        echo "--- Resumen del Build ---"
-        grep -E "(Warning|Error|warning|error)" build-output.log \
-            | grep -v "0 Error(s)" \
-            | grep -v "0 Warning(s)" \
-            | head -20 || true
+    echo "--- Resumen del Build ---"
 
-        exit \$BUILD_RESULT
-    """
+    grep -E "(Warning|Error|warning|error)" build-output.log \
+        | grep -v "0 Error(s)" \
+        | grep -v "0 Warning(s)" \
+        | head -20 || true
+"""
 
     // Archivar log del build
     archiveArtifacts artifacts: 'build-output.log', allowEmptyArchive: true
